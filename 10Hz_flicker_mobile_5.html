@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 Hz 黑白闪烁（CSS动画版，Safari兼容）</title>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.4rem;
+    user-select: none;
+    overflow: hidden;
+  }
+  #start {
+    padding: 1em 2em;
+    border: 2px solid white;
+    border-radius: 10px;
+    background: none;
+    color: white;
+    font-size: 1.2em;
+  }
+  @keyframes flicker {
+    0%, 50% { background-color: black; }
+    51%, 100% { background-color: white; }
+  }
+  .flicker {
+    animation: flicker 0.1s infinite steps(1, start);
+  }
+</style>
+</head>
+<body>
+  <button id="start">开始 10 Hz 闪烁（30分钟自动停止）</button>
+
+<script>
+let flickering = false;
+let stopTimer = null;
+
+function startFlicker() {
+  if (flickering) return;
+  flickering = true;
+  document.body.classList.add("flicker");
+  document.getElementById("start").style.display = "none";
+
+  // 30分钟自动停止
+  stopTimer = setTimeout(stopFlicker, 30 * 60 * 1000);
+}
+
+function stopFlicker() {
+  flickering = false;
+  clearTimeout(stopTimer);
+  document.body.classList.remove("flicker");
+  document.body.style.backgroundColor = "black";
+  document.body.innerHTML = '<p style="color:white;">闪烁已停止（30分钟到或手动停止）</p>';
+}
+
+// 点击开始
+document.getElementById("start").addEventListener("click", startFlicker);
+
+// 点击屏幕任意位置停止
+document.body.addEventListener("click", () => {
+  if (flickering) stopFlicker();
+});
+</script>
+</body>
+</html>
